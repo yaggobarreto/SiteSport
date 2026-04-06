@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+:root {
+  --bg-color: #fafafa;
+  --bg-lighter: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --accent: #00db84;
+  --hero-bg: #080c16; /* Deep navy/charcoal representing the shirt's universe */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Lenis */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* Global utilities */
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  left: 0;
+  bottom: -5px;
+  transition: width 0.3s ease;
+}
+.nav-link:hover { color: inherit; }
+.nav-link:hover::after { width: 100%; }
+
+.btn-primary {
+  background-color: var(--text-primary);
+  color: var(--bg-lighter);
+  border: 1px solid var(--text-primary);
+  padding: 1.2rem 3.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.btn-primary:hover {
+  background-color: transparent;
+  color: var(--text-primary);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.btn-hero {
+  background-color: #ffffff;
+  color: var(--hero-bg);
+  border: 1px solid #ffffff;
+  padding: 1.2rem 3.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.btn-hero:hover {
+  background-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
+}
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbar for Cart Drawer */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
