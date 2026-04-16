@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import ProductPage from './pages/ProductPage'
+import PaymentStatusPage from './pages/PaymentStatusPage'
 import CartDrawer from './components/CartDrawer'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
@@ -34,6 +35,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/produto/:slug" element={<ProductPage />} />
+        <Route path="/pagamento-concluido" element={<PaymentStatusPage />} />
       </Routes>
       <CartDrawer />
     </div>

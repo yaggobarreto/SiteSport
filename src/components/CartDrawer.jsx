@@ -1,18 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { urlFor } from '../lib/sanity';
+import {
+  createInfinitePayCheckout,
+  hasInfinitePayConfig,
+} from '../lib/infinitepay';
 
 export default function CartDrawer() {
   const { items, isOpen, toggleCart, updateQuantity, removeItem, getTotal } = useCartStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
-  const handleCheckout = () => {
-    // Lead to WhatsApp with order details or direct to payment
-    const orderItems = items.map(i => `${i.quantity}x ${i.name} (Tam: ${i.size})`).join('%0A');
-    const total = getTotal().toFixed(2);
-    const msg = `Olá! Gostaria de finalizar o pedido:%0A%0A${orderItems}%0A%0ATotal: R$ ${total}`;
-    window.open(`https://wa.me/5511999999999?text=${msg}`, '_blank');
+  const handleCheckout = async () => {
+    if (items.length === 0 || isSubmitting) return;
+
+    if (!hasInfinitePayConfig()) {
+      setCheckoutError('Configure a handle da InfinitePay antes de finalizar o pedido.');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setCheckoutError('');
+
+      const redirectUrl = `${window.location.origin}/pagamento-concluido`;
+      const { checkoutUrl } = await createInfinitePayCheckout({
+        items,
+        redirectUrl,
+      });
+
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      setCheckoutError(error.message || 'Nao foi possivel iniciar o checkout.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,11 +129,17 @@ export default function CartDrawer() {
                 <button 
                   onClick={handleCheckout}
                   style={{ 
-                    width: '100%', padding: '1.2rem', background: '#111', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem'
+                    width: '100%', padding: '1.2rem', background: '#111', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', cursor: isSubmitting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.7rem', opacity: isSubmitting ? 0.7 : 1
                   }}
+                  disabled={isSubmitting}
                 >
-                  Finalizar Pedido <ArrowRight size={18} />
+                  {isSubmitting ? 'Abrindo pagamento...' : 'Finalizar Pedido'} <ArrowRight size={18} />
                 </button>
+                {checkoutError && (
+                  <p style={{ textAlign: 'center', marginTop: '0.75rem', fontSize: '0.8rem', color: '#c53b3b' }}>
+                    {checkoutError}
+                  </p>
+                )}
                 <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.75rem', color: '#aaa' }}>Frete calculado na finalização</p>
               </div>
             )}
