@@ -38,7 +38,7 @@ export default function Products() {
   };
 
   return (
-    <section id="camisas" style={{ padding: '8rem 8%', background: '#fafafa' }}>
+    <section id="camisas" className="section-padding" style={{ background: '#fafafa' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <motion.p
@@ -64,13 +64,13 @@ export default function Products() {
       </div>
 
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '2rem' }}>
+        <div className="responsive-grid">
           {[1, 2, 3, 4].map(i => (
             <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', aspectRatio: '4/5', background: 'linear-gradient(90deg, #ececec 25%, #f5f5f5 50%, #ececec 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
           ))}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '2rem' }}>
+        <div className="responsive-grid">
           {produtos.map((p, index) => (
             <Link 
               key={p._id} 

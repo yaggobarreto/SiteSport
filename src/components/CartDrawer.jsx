@@ -12,7 +12,9 @@ export default function CartDrawer() {
     const orderItems = items.map(i => `${i.quantity}x ${i.name} (Tam: ${i.size})`).join('%0A');
     const total = getTotal().toFixed(2);
     const msg = `Olá! Gostaria de finalizar o pedido:%0A%0A${orderItems}%0A%0ATotal: R$ ${total}`;
-    window.open(`https://wa.me/5511999999999?text=${msg}`, '_blank');
+    
+    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || '5511999999999';
+    window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
   };
 
   return (

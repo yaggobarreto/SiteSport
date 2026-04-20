@@ -30,12 +30,12 @@ export default function Hero() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      className="nav-padding"
       style={{
         position: 'relative',
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
-        padding: '0 8%',
         overflow: 'hidden',
         // Background matches the dark navy edges of the photo — no color seam visible
         background: 'linear-gradient(135deg, #060a14 0%, #0a0f1e 60%, #08101e 100%)',
@@ -43,6 +43,7 @@ export default function Hero() {
     >
       {/* ── Right: Shirt Image (beside the text) ─────────────────── */}
       <motion.div
+        className="hero-shirt-container"
         style={{
           position: 'absolute',
           right: '-2%', top: '50%', translateY: '-50%',
@@ -86,7 +87,7 @@ export default function Hero() {
       }} />
 
       {/* ── Text Content ─────────────────────────────────────────────── */}
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: '560px', marginTop: '5vh' }}>
+      <div className="hero-content" style={{ position: 'relative', zIndex: 10, maxWidth: '560px', marginTop: '5vh' }}>
 
         {/* Badge */}
         <motion.div
@@ -108,11 +109,7 @@ export default function Hero() {
         <motion.h2
           initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontSize: '5.5rem', fontWeight: 900, lineHeight: 0.9,
-            marginBottom: '1.5rem', textTransform: 'uppercase',
-            letterSpacing: '-3px', color: '#ffffff',
-          }}
+          className="hero-headline"
         >
           A Energia<br/>do Jogo.
         </motion.h2>
@@ -133,6 +130,7 @@ export default function Hero() {
         <motion.div
           initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="hero-ctas"
           style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
         >
           <button className="btn-hero" style={{ boxShadow: '0 8px 25px rgba(0,0,0,0.5)' }}>
@@ -145,8 +143,8 @@ export default function Hero() {
             textTransform: 'uppercase', letterSpacing: '1px',
             borderRadius: '50px', cursor: 'pointer', transition: 'all 0.3s ease',
           }}
-            onMouseEnter={e => { e.target.style.borderColor = '#fff'; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
-            onMouseLeave={e => { e.target.style.borderColor = 'rgba(255,255,255,0.35)'; e.target.style.background = 'transparent'; }}
+            onMouseEnter={e => { if(e.target.style) e.target.style.borderColor = '#fff'; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
+            onMouseLeave={e => { if(e.target.style) e.target.style.borderColor = 'rgba(255,255,255,0.35)'; e.target.style.background = 'transparent'; }}
           >
             Ver Coleção
           </button>
@@ -156,6 +154,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
+          className="hero-stats"
           style={{
             display: 'flex', gap: '3rem', marginTop: '4rem',
             borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '2rem',

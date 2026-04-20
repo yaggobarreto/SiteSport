@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 
 export default function Contact() {
   return (
-    <section id="contato" style={{ padding: '8rem 8%', background: '#fff', borderTop: '1px solid #f0f0f0' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+    <section id="contato" className="section-padding" style={{ background: '#fff', borderTop: '1px solid #f0f0f0' }}>
+      <div className="product-layout-grid">
         {/* Left */}
         <motion.div
           initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }}
@@ -40,7 +40,7 @@ export default function Contact() {
           viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
         >
           <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-grid">
               {['Nome', 'Sobrenome'].map(p => (
                 <div key={p}>
                   <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#777', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '0.5rem' }}>{p}</label>

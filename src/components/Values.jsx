@@ -10,7 +10,7 @@ const VALORES = [
 
 export default function Values() {
   return (
-    <section style={{ padding: '7rem 8%', background: '#fff', borderTop: '1px solid #f0f0f0' }}>
+    <section className="section-padding" style={{ background: '#fff', borderTop: '1px solid #f0f0f0' }}>
       <motion.p
         initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }} transition={{ duration: 0.6 }}

@@ -37,20 +37,21 @@ export default function ProductPage() {
     <div style={{ background: '#fff', minHeight: '100vh' }}>
       <Navbar darkContent />
 
-      <main style={{ padding: '8rem 8% 4rem', maxWidth: '1400px', margin: '0 auto' }}>
+      <main className="section-padding" style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#666', textDecoration: 'none', marginBottom: '2rem', fontSize: '0.9rem', fontWeight: 600 }}>
           <ChevronLeft size={16} /> Voltar para Coleção
         </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '4rem' }}>
+        <div className="product-layout-grid">
           
           {/* Gallery Section */}
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div className="gallery-container">
+            <div className="thumbnails-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               {allImages.map((img, i) => (
                 <button 
                   key={i} 
                   onClick={() => setActiveImage(img)}
+                  className="thumbnail-button"
                   style={{ 
                     width: '70px', height: '90px', borderRadius: '8px', overflow: 'hidden', border: activeImage === img ? '2px solid #111' : '1px solid #eee', cursor: 'pointer', padding: 0, background: 'none'
                   }}
