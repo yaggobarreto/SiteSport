@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { client, urlFor } from '../lib/sanity';
+
+const FALLBACK_PRODUCT = {
+  name: 'Camisa Brasil 2025',
+  price: 349.90,
+  badge: 'Novo',
+  description: 'A nova camisa dark da seleção brasileira. Desenvolvida com tecnologia Dri-FIT ADV para performance máxima em campo e estilo inegável fora dele. Tecido respirável, corte slim e acabamento premium.',
+  sizes: ['PP', 'P', 'M', 'G', 'GG'],
+  mainImage: null
+};
 
 export default function Feature() {
+  const [product, setProduct] = useState(FALLBACK_PRODUCT);
+  const [loading, setLoading] = useState(true);
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
   const y = useTransform(scrollYProgress, [0.05, 0.2], [60, 0]);
+
+  useEffect(() => {
+    client.fetch(`*[_type == "product" && featured == true][0]`)
+      .then((data) => {
+        if (data) setProduct(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   return (
     <motion.section 
@@ -23,18 +44,26 @@ export default function Feature() {
           viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', aspectRatio: '1/1', background: '#e8e8e8' }}
         >
-          <img 
-            src="/assets/hero/camisabr.jpg" alt="Camisa em destaque" 
-            style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '2rem' }}
-          />
+          {product.mainImage ? (
+            <img 
+              src={urlFor(product.mainImage).width(800).url()} alt={product.name} 
+              style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '2rem' }}
+            />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
+              👕
+            </div>
+          )}
           {/* Badge */}
-          <div style={{
-            position: 'absolute', top: '1.5rem', left: '1.5rem',
-            background: '#050814', color: '#fff', padding: '0.5rem 1.2rem',
-            borderRadius: '50px', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px'
-          }}>
-            Novo
-          </div>
+          {product.badge && (
+            <div style={{
+              position: 'absolute', top: '1.5rem', left: '1.5rem',
+              background: '#050814', color: '#fff', padding: '0.5rem 1.2rem',
+              borderRadius: '50px', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px'
+            }}>
+              {product.badge}
+            </div>
+          )}
         </motion.div>
 
         {/* Text side */}
@@ -46,15 +75,21 @@ export default function Feature() {
             Destaque da Temporada
           </p>
           <h3 style={{ fontSize: '3.5rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-2px', marginBottom: '1.5rem', color: '#111', textTransform: 'uppercase' }}>
-            Camisa<br/>Brasil 2025
+            {product.name.split(' ').map((word, i) => (
+              <React.Fragment key={i}>
+                {word} {i === 0 && <br/>}
+              </React.Fragment>
+            ))}
           </h3>
           <p style={{ fontSize: '1.15rem', color: '#666', lineHeight: 1.7, marginBottom: '2.5rem' }}>
-            A nova camisa dark da seleção brasileira. Desenvolvida com tecnologia Dri-FIT ADV para performance máxima em campo e estilo inegável fora dele. Tecido respirável, corte slim e acabamento premium.
+            {product.description || 'Produto exclusivo da nova coleção.'}
           </p>
           <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2.5rem' }}>
             <div>
               <p style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Preço</p>
-              <p style={{ fontSize: '2rem', fontWeight: 900, color: '#111' }}>R$ 349,90</p>
+              <p style={{ fontSize: '2rem', fontWeight: 900, color: '#111' }}>
+                R$ {product.price?.toFixed(2).replace('.', ',')}
+              </p>
             </div>
             <div style={{ width: '1px', height: '40px', background: '#e0e0e0' }} />
             <div>
@@ -66,7 +101,7 @@ export default function Feature() {
           <div style={{ marginBottom: '2.5rem' }}>
             <p style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px', color: '#999', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Tamanho</p>
             <div style={{ display: 'flex', gap: '0.7rem' }}>
-              {['PP', 'P', 'M', 'G', 'GG'].map(s => (
+              {(product.sizes || ['P', 'M', 'G']).map(s => (
                 <button key={s} style={{
                   width: '44px', height: '44px', borderRadius: '8px',
                   border: s === 'M' ? '2px solid #111' : '1px solid #e0e0e0',
