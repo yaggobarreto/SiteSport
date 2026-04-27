@@ -14,17 +14,24 @@ const FALLBACK_PRODUCT = {
 export default function Feature() {
   const [product, setProduct] = useState(FALLBACK_PRODUCT);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
   const y = useTransform(scrollYProgress, [0.05, 0.2], [60, 0]);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     client.fetch(`*[_type == "product" && featured == true][0]`)
       .then((data) => {
         if (data) setProduct(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   return (
@@ -32,22 +39,35 @@ export default function Feature() {
       style={{ opacity, y }}
       id="lancamentos"
       className="section-light"
-      sx={{ padding: '8rem 5%' }}
+      sx={{ padding: isMobile ? '4rem 5%' : '8rem 5%' }}
     >
       <div style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem',
-        alignItems: 'center', padding: '8rem 8%', background: '#f5f5f5'
+        display: isMobile ? 'flex' : 'grid',
+        flexDirection: isMobile ? 'column' : 'row',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+        gap: isMobile ? '3rem' : '6rem',
+        alignItems: 'center', 
+        padding: isMobile ? '4rem 5%' : '8rem 8%', 
+        background: '#f5f5f5'
       }}>
         {/* Image side */}
         <motion.div
-          initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: isMobile ? 0 : -60, y: isMobile ? 30 : 0 }} 
+          whileInView={{ opacity: 1, x: 0, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'relative', borderRadius: '20px', overflow: 'hidden', aspectRatio: '1/1', background: '#e8e8e8' }}
+          style={{ 
+            position: 'relative', 
+            borderRadius: '20px', 
+            overflow: 'hidden', 
+            aspectRatio: '1/1', 
+            background: '#e8e8e8',
+            width: '100%'
+          }}
         >
           {product.mainImage ? (
             <img 
               src={urlFor(product.mainImage).width(800).url()} alt={product.name} 
-              style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '2rem' }}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', padding: isMobile ? '1rem' : '2rem' }}
             />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '5rem' }}>
@@ -68,42 +88,60 @@ export default function Feature() {
 
         {/* Text side */}
         <motion.div
-          initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: isMobile ? 0 : 60, y: isMobile ? 30 : 0 }} 
+          whileInView={{ opacity: 1, x: 0, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ textAlign: isMobile ? 'center' : 'left' }}
         >
           <p style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '2px', color: '#00db84', textTransform: 'uppercase', marginBottom: '1rem' }}>
             Destaque da Temporada
           </p>
-          <h3 style={{ fontSize: '3.5rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-2px', marginBottom: '1.5rem', color: '#111', textTransform: 'uppercase' }}>
+          <h3 style={{ 
+            fontSize: isMobile ? '2.5rem' : '3.5rem', 
+            fontWeight: 900, 
+            lineHeight: 1, 
+            letterSpacing: '-2px', 
+            marginBottom: '1.5rem', 
+            color: '#111', 
+            textTransform: 'uppercase' 
+          }}>
             {product.name.split(' ').map((word, i) => (
               <React.Fragment key={i}>
-                {word} {i === 0 && <br/>}
+                {word} {i === 0 && !isMobile && <br/>}
               </React.Fragment>
             ))}
           </h3>
-          <p style={{ fontSize: '1.15rem', color: '#666', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+          <p style={{ fontSize: isMobile ? '1rem' : '1.15rem', color: '#666', lineHeight: 1.7, marginBottom: '2.5rem' }}>
             {product.description || 'Produto exclusivo da nova coleção.'}
           </p>
-          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: isMobile ? '1rem' : '2rem', 
+            alignItems: 'center', 
+            justifyContent: isMobile ? 'center' : 'flex-start',
+            marginBottom: '2.5rem' 
+          }}>
             <div>
               <p style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Preço</p>
-              <p style={{ fontSize: '2rem', fontWeight: 900, color: '#111' }}>
+              <p style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 900, color: '#111' }}>
                 R$ {product.price?.toFixed(2).replace('.', ',')}
               </p>
             </div>
             <div style={{ width: '1px', height: '40px', background: '#e0e0e0' }} />
             <div>
               <p style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Prazo</p>
-              <p style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111' }}>7–10 dias</p>
+              <p style={{ fontSize: isMobile ? '0.9rem' : '1.1rem', fontWeight: 700, color: '#111' }}>7–10 dias</p>
             </div>
           </div>
           {/* Size selector */}
           <div style={{ marginBottom: '2.5rem' }}>
             <p style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px', color: '#999', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Tamanho</p>
-            <div style={{ display: 'flex', gap: '0.7rem' }}>
+            <div style={{ display: 'flex', gap: '0.7rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
               {(product.sizes || ['P', 'M', 'G']).map(s => (
                 <button key={s} style={{
-                  width: '44px', height: '44px', borderRadius: '8px',
+                  width: isMobile ? '40px' : '44px', 
+                  height: isMobile ? '40px' : '44px', 
+                  borderRadius: '8px',
                   border: s === 'M' ? '2px solid #111' : '1px solid #e0e0e0',
                   background: s === 'M' ? '#111' : '#fff',
                   color: s === 'M' ? '#fff' : '#333',
@@ -112,7 +150,7 @@ export default function Feature() {
               ))}
             </div>
           </div>
-          <button className="btn-primary" style={{ padding: '1.2rem 4rem' }}>
+          <button className="btn-primary" style={{ padding: '1.2rem 4rem', width: isMobile ? '100%' : 'auto' }}>
             Adicionar ao Carrinho
           </button>
         </motion.div>
