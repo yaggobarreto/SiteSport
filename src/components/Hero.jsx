@@ -223,6 +223,7 @@ export default function Hero() {
       {/* Scroll indicator */}
       {!isMobile && (
         <motion.div
+          className="scroll-indicator"
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
           style={{
