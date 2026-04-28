@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
