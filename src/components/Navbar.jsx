@@ -87,7 +87,7 @@ export default function Navbar({ darkContent = false }) {
         </div>
       </div>
 
-      <AnimatePresence>
+      <>
         {isMenuOpen && (
           <>
             <motion.div
@@ -147,7 +147,7 @@ export default function Navbar({ darkContent = false }) {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </>
     </motion.nav>
   );
 }

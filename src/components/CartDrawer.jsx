@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { urlFor } from '../lib/sanity';
@@ -44,7 +44,7 @@ export default function CartDrawer() {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {isOpen && (
         <>
           <motion.div
@@ -144,6 +144,6 @@ export default function CartDrawer() {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 }

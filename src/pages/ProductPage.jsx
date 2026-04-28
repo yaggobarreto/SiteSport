@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { client, urlFor } from '../lib/sanity';
 import { useCartStore } from '../store/useCartStore';
 import { ChevronLeft, ShoppingBag, Check, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
@@ -61,7 +61,7 @@ export default function ProductPage() {
               ))}
             </div>
             <div style={{ flex: 1, background: '#f8f8f8', borderRadius: '20px', overflow: 'hidden', aspectRatio: '4/5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AnimatePresence mode="wait">
+              <>
                 <motion.img 
                   key={activeImage?.asset?._ref}
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -69,7 +69,7 @@ export default function ProductPage() {
                   src={urlFor(activeImage).width(1000).url()} 
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
                 />
-              </AnimatePresence>
+              </>
             </div>
           </div>
 
