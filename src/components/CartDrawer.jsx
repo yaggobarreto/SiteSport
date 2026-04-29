@@ -7,11 +7,12 @@ import { urlFor } from '../lib/sanity';
 
 export default function CartDrawer() {
   const { items, isOpen, toggleCart, updateQuantity, removeItem, getTotal } = useCartStore();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
 
   // ✅ PAGAMENTO INFINITEPAY
 const handleCheckout = async () => {
   try {
-    const response = await fetch("https://SEU-BACKEND.vercel.app/create-payment", {
+    const response = await fetch(`${apiBaseUrl}/api/create-payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

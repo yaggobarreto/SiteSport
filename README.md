@@ -1,21 +1,34 @@
-<<<<<<< HEAD
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
 # SiteSport
-Site criado para venda de roupas e materiais esportivos
->>>>>>> ad94edd6de0c11e3df39e8c0bbf1242b86d57cbd
+
+Site em React + Vite para venda de roupas e materiais esportivos.
+
+## Rodar localmente
+
+```bash
+npm install
+npm run dev
+```
+
+## Deploy: Hostinger (front) + Vercel (back)
+
+- Front (Hostinger): rode `npm run build` e envie a pasta `dist/` para o `public_html`.
+- SPA routes: este repo inclui `public/.htaccess` (vai junto pro `dist/`) para `/produto/...` e `/pagamento-concluido` funcionarem.
+- Back (Vercel): faça deploy do projeto que contém a pasta `api/` e configure as env vars.
+- Como front e back ficam em domínios diferentes, configure no build do front: `VITE_API_BASE_URL=https://SEU-PROJETO.vercel.app`
+- Configure no back: `INFINITEPAY_REDIRECT_URL=https://fabayosports.com/pagamento-concluido` (senão ele pode redirecionar pro domínio da Vercel).
+
+## Pagamento (InfinitePay) na Vercel
+
+- Endpoint: `POST /api/create-payment`
+- Status do pagamento: `POST /api/payment-check`
+- Webhook (opcional): `POST /api/infinitepay-webhook`
+
+Obs: a InfinitePay costuma documentar `items` (e às vezes aparece `itens`); o backend envia os dois por compatibilidade.
+
+### Variáveis de ambiente
+
+Defina na Vercel (Project Settings → Environment Variables) e no seu `.env` local:
+
+- `INFINITEPAY_HANDLE` (obrigatório) — seu `@handle` do InfinitePay Checkout
+- `INFINITEPAY_REDIRECT_URL` (opcional) — padrão: `/pagamento-concluido` no mesmo domínio
+- `INFINITEPAY_WEBHOOK_URL` (opcional) — ex: `https://seu-dominio.vercel.app/api/infinitepay-webhook`
