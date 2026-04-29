@@ -1,9 +1,13 @@
 {
   "version": 2,
   "buildCommand": "echo \"Skipping frontend build (API only)\"",
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.js" }
+  ],
   "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
-    }
+    "api/**/*.js": { "runtime": "nodejs20.x" }
   }
 }
