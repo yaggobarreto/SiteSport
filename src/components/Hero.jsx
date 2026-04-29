@@ -180,11 +180,7 @@ export default function Hero() {
             alignItems: 'center' 
           }}
         >
-          <button 
-            className="btn-hero" 
-            onClick={() => document.getElementById('camisas')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ boxShadow: '0 8px 25px rgba(0,0,0,0.5)', width: isMobile ? '100%' : 'auto' }}
-          >
+          <button className="btn-hero" style={{ boxShadow: '0 8px 25px rgba(0,0,0,0.5)', width: isMobile ? '100%' : 'auto' }}>
             {heroData.ctaLabel}
           </button>
           <button style={{
@@ -197,7 +193,6 @@ export default function Hero() {
           }}
             onMouseEnter={e => { e.target.style.borderColor = '#fff'; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
             onMouseLeave={e => { e.target.style.borderColor = 'rgba(255,255,255,0.35)'; e.target.style.background = 'transparent'; }}
-            onClick={() => document.getElementById('lancamentos')?.scrollIntoView({ behavior: 'smooth' })}
           >
             {heroData.ctaSecondaryLabel}
           </button>

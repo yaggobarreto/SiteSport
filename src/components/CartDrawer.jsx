@@ -96,56 +96,36 @@ const handleCheckout = async () => {
             </div>
 
             {/* Items */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
               {items.length === 0 ? (
-                <div style={{ textAlign: 'center', color: '#999', marginTop: '3rem' }}>
-                  <ShoppingBag size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
-                  <p>Seu carrinho está vazio.</p>
-                </div>
+                <p style={{ textAlign: 'center' }}>Carrinho vazio</p>
               ) : (
                 items.map((item) => (
-                  <div key={`${item._id}-${item.size}`} style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+                  <div key={`${item._id}-${item.size}`} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                     
-                    <div style={{ width: '85px', height: '105px', borderRadius: '12px', overflow: 'hidden', background: '#f8f8f8', flexShrink: 0 }}>
-                      <img
-                        src={urlFor(item.mainImage).width(160).url()}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
+                    <img
+                      src={urlFor(item.mainImage).width(160).url()}
+                      style={{ width: '80px', height: '100px', objectFit: 'cover' }}
+                    />
 
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ flex: 1 }}>
+                      <h4>{item.name}</h4>
+                      <p>Tam: {item.size}</p>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div>
-                          <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#111', lineHeight: 1.2, marginBottom: '0.2rem' }}>{item.name}</h4>
-                          <p style={{ fontSize: '0.8rem', color: '#666', fontWeight: 600 }}>Tamanho: <span style={{ color: '#111' }}>{item.size}</span></p>
-                        </div>
-                        <button 
-                          onClick={() => removeItem(item._id, item.size)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', transition: 'color 0.2s' }}
-                          onMouseEnter={(e) => e.target.style.color = '#ff4444'}
-                          onMouseLeave={(e) => e.target.style.color = '#ccc'}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f5f5f5', padding: '0.4rem 0.8rem', borderRadius: '50px' }}>
-                          <button 
-                            onClick={() => updateQuantity(item._id, item.size, item.quantity - 1)}
-                            style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#555' }}
-                          ><Minus size={14} /></button>
-                          <span style={{ fontWeight: 700, fontSize: '0.9rem', minWidth: '15px', textAlign: 'center' }}>{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item._id, item.size, item.quantity + 1)}
-                            style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', cursor: 'pointer', color: '#555' }}
-                          ><Plus size={14} /></button>
+                          <button onClick={() => updateQuantity(item._id, item.size, item.quantity - 1)}>-</button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item._id, item.size, item.quantity + 1)}>+</button>
                         </div>
 
-                        <p style={{ fontWeight: 800, fontSize: '1rem', color: '#111' }}>R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}</p>
+                        <p>R$ {(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>
 
+                    <button onClick={() => removeItem(item._id, item.size)}>
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 ))
               )}
