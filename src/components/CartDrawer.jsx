@@ -7,12 +7,15 @@ import { urlFor } from '../lib/sanity';
 
 export default function CartDrawer() {
   const { items, isOpen, toggleCart, updateQuantity, removeItem, getTotal } = useCartStore();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+  const apiBaseUrlRaw = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  const apiBaseUrl = apiBaseUrlRaw.replace(/\/+$/, '');
 
   // ✅ PAGAMENTO INFINITEPAY
 const handleCheckout = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/api/create-payment`, {
+    const url = apiBaseUrl ? `${apiBaseUrl}/api/create-payment` : `/api/create-payment`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -25,6 +28,17 @@ const handleCheckout = async () => {
         }))
       })
     });
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Pagamento falhou (${response.status}). Resposta: ${text.slice(0, 200)}`);
+    }
+
+    if (!contentType.includes('application/json')) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Backend retornou algo que não é JSON. Resposta: ${text.slice(0, 200)}`);
+    }
 
     const data = await response.json();
 

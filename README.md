@@ -17,6 +17,8 @@ npm run dev
 - Como front e back ficam em domínios diferentes, configure no build do front: `VITE_API_BASE_URL=https://SEU-PROJETO.vercel.app`
 - Configure no back: `INFINITEPAY_REDIRECT_URL=https://fabayosports.com/pagamento-concluido` (senão ele pode redirecionar pro domínio da Vercel).
 
+Se aparecer `Unexpected token '<' ... is not valid JSON`, normalmente é porque o front não está apontando para a URL da Vercel (ficou sem `VITE_API_BASE_URL`) e está chamando `/api/...` no domínio da Hostinger, que devolve HTML.
+
 ## Pagamento (InfinitePay) na Vercel
 
 - Endpoint: `POST /api/create-payment`
