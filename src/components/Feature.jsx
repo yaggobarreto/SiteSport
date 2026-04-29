@@ -24,12 +24,28 @@ export default function Feature() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    client.fetch(`*[_type == "product" && featured == true][0]`)
-      .then((data) => {
-        if (data) setProduct(data);
+    const fetchFeature = async () => {
+      try {
+        const sectionData = await client.fetch(`*[_type == "featuredSection"][0]{ tagline, customDescription, product-> }`);
+        if (sectionData && sectionData.product) {
+          setProduct({
+            ...sectionData.product,
+            tagline: sectionData.tagline,
+            description: sectionData.customDescription || sectionData.product.description
+          });
+          setLoading(false);
+          return;
+        }
+        
+        const fallbackData = await client.fetch(`*[_type == "product" && featured == true][0]`);
+        if (fallbackData) setProduct(fallbackData);
+      } catch (e) {
+        console.error(e);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
+    fetchFeature();
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
@@ -94,7 +110,7 @@ export default function Feature() {
           style={{ textAlign: isMobile ? 'center' : 'left' }}
         >
           <p style={{ fontSize: '0.85rem', fontWeight: 700, letterSpacing: '2px', color: '#00db84', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            Destaque da Temporada
+            {product.tagline || 'Destaque da Temporada'}
           </p>
           <h3 style={{ 
             fontSize: isMobile ? '2.5rem' : '3.5rem', 
