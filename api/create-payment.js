@@ -1,4 +1,4 @@
-const { randomUUID } = require("crypto");
+import { randomUUID } from "crypto";
 
 function readJsonBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -19,7 +19,7 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // Basic CORS for local dev + browser calls
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -116,4 +116,4 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     return sendJson(res, 500, { error: "Failed to create payment", details: String(error?.message || error) });
   }
-};
+}

@@ -2,9 +2,8 @@
   "version": 2,
   "buildCommand": "echo \"Skipping frontend build (API only)\"",
   "functions": {
-    "api/**/*.cjs": {
+    "api/**/*.js": {
       "runtime": "nodejs20.x"
     }
   }
 }
-
