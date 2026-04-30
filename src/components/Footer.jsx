@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <footer style={{ background: '#111', color: '#fff', padding: '5rem 8% 3rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '4rem', marginBottom: '4rem', flexWrap: 'wrap' }}>
+    <footer style={{ background: '#111', color: '#fff', padding: isMobile ? '4rem 5% 2rem' : '5rem 8% 3rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr 1fr 1fr', gap: isMobile ? '2.5rem' : '4rem', marginBottom: '4rem' }}>
         <div>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '-1px', textTransform: 'uppercase', marginBottom: '1rem' }}>
             FABAYO<br/><span style={{ fontSize: '0.9rem', fontWeight: 400, letterSpacing: '0.5rem', color: '#888' }}>sports</span>

@@ -72,16 +72,18 @@ export default function Hero() {
       {/* ── Background Image (behind text on mobile, beside on desktop) ── */}
       <motion.div
         style={{
-          position: isMobile ? 'absolute' : 'absolute',
-          right: isMobile ? '-10%' : '-2%', 
+          position: 'absolute',
+          right: isMobile ? '0' : '-2%', 
           top: isMobile ? '20%' : '50%', 
           translateY: isMobile ? '0' : '-50%',
           width: isMobile ? '100%' : '58%', 
           height: isMobile ? '60%' : '100%',
-          display: 'flex', justifyContent: 'center', alignItems: 'center',
           zIndex: 1,
-          x: bgX, y: bgY,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           pointerEvents: 'none',
+          x: bgX, y: bgY,
           opacity: isMobile ? 0.4 : 1,
         }}
       >
@@ -180,7 +182,11 @@ export default function Hero() {
             alignItems: 'center' 
           }}
         >
-          <button className="btn-hero" style={{ boxShadow: '0 8px 25px rgba(0,0,0,0.5)', width: isMobile ? '100%' : 'auto' }}>
+          <button 
+            className="btn-hero" 
+            onClick={() => document.getElementById('camisas')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ boxShadow: '0 8px 25px rgba(0,0,0,0.5)', width: isMobile ? '100%' : 'auto' }}
+          >
             {heroData.ctaLabel}
           </button>
           <button style={{
@@ -193,6 +199,7 @@ export default function Hero() {
           }}
             onMouseEnter={e => { e.target.style.borderColor = '#fff'; e.target.style.background = 'rgba(255,255,255,0.1)'; }}
             onMouseLeave={e => { e.target.style.borderColor = 'rgba(255,255,255,0.35)'; e.target.style.background = 'transparent'; }}
+            onClick={() => document.getElementById('lancamentos')?.scrollIntoView({ behavior: 'smooth' })}
           >
             {heroData.ctaSecondaryLabel}
           </button>
