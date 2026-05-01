@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { client, urlFor } from '../lib/sanity';
+import { useCartStore } from '../store/useCartStore';
 
 const FALLBACK_PRODUCT = {
   name: 'Camisa Brasil 2025',
@@ -15,9 +16,11 @@ export default function Feature() {
   const [product, setProduct] = useState(FALLBACK_PRODUCT);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(FALLBACK_PRODUCT.sizes[0]);
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
   const y = useTransform(scrollYProgress, [0.05, 0.2], [60, 0]);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -28,17 +31,22 @@ export default function Feature() {
       try {
         const sectionData = await client.fetch(`*[_type == "featuredSection"][0]{ tagline, customDescription, product-> }`);
         if (sectionData && sectionData.product) {
-          setProduct({
+          const p = {
             ...sectionData.product,
             tagline: sectionData.tagline,
             description: sectionData.customDescription || sectionData.product.description
-          });
+          };
+          setProduct(p);
+          if (p.sizes?.length > 0) setSelectedSize(p.sizes[0]);
           setLoading(false);
           return;
         }
         
         const fallbackData = await client.fetch(`*[_type == "product" && featured == true][0]`);
-        if (fallbackData) setProduct(fallbackData);
+        if (fallbackData) {
+          setProduct(fallbackData);
+          if (fallbackData.sizes?.length > 0) setSelectedSize(fallbackData.sizes[0]);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -154,19 +162,30 @@ export default function Feature() {
             <p style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px', color: '#999', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Tamanho</p>
             <div style={{ display: 'flex', gap: '0.7rem', justifyContent: isMobile ? 'center' : 'flex-start' }}>
               {(product.sizes || ['P', 'M', 'G']).map(s => (
-                <button key={s} style={{
-                  width: isMobile ? '40px' : '44px', 
-                  height: isMobile ? '40px' : '44px', 
-                  borderRadius: '8px',
-                  border: s === 'M' ? '2px solid #111' : '1px solid #e0e0e0',
-                  background: s === 'M' ? '#111' : '#fff',
-                  color: s === 'M' ? '#fff' : '#333',
-                  fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s',
-                }}>{s}</button>
+                <button
+                  key={s}
+                  onClick={() => setSelectedSize(s)}
+                  style={{
+                    width: isMobile ? '40px' : '44px', 
+                    height: isMobile ? '40px' : '44px', 
+                    borderRadius: '8px',
+                    border: selectedSize === s ? '2px solid #111' : '1px solid #e0e0e0',
+                    background: selectedSize === s ? '#111' : '#fff',
+                    color: selectedSize === s ? '#fff' : '#333',
+                    fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s',
+                  }}
+                >{s}</button>
               ))}
             </div>
           </div>
-          <button className="btn-primary" style={{ padding: '1.2rem 4rem', width: isMobile ? '100%' : 'auto' }}>
+          <button
+            className="btn-primary"
+            onClick={() => {
+              if (!selectedSize) { alert('Selecione um tamanho!'); return; }
+              addItem(product, selectedSize);
+            }}
+            style={{ padding: '1.2rem 4rem', width: isMobile ? '100%' : 'auto' }}
+          >
             Adicionar ao Carrinho
           </button>
         </motion.div>
