@@ -4,6 +4,7 @@ import { client, urlFor } from '../lib/sanity';
 import { useCartStore } from '../store/useCartStore';
 
 const FALLBACK_PRODUCT = {
+  _id: 'fallback-brasil-2025',
   name: 'Camisa Brasil 2025',
   price: 349.90,
   badge: 'Novo',
@@ -29,7 +30,7 @@ export default function Feature() {
 
     const fetchFeature = async () => {
       try {
-        const sectionData = await client.fetch(`*[_type == "featuredSection"][0]{ tagline, customDescription, product-> }`);
+        const sectionData = await client.fetch(`*[_type == "featuredSection"][0]{ tagline, customDescription, product->{ _id, name, slug, price, originalPrice, badge, description, mainImage, images, sizes, category, checkoutUrl, inStock } }`);
         if (sectionData && sectionData.product) {
           const p = {
             ...sectionData.product,
