@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import ProductPage from './pages/ProductPage'
 import PaymentResult from './pages/PaymentResult'
 import CartDrawer from './components/CartDrawer'
+import WhatsAppFloating from './components/WhatsAppFloating'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/pagamento-concluido" element={<PaymentResult />} />
       </Routes>
       <CartDrawer />
+      <WhatsAppFloating />
     </div>
   )
 }
