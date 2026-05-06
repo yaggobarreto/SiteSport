@@ -110,7 +110,7 @@ function CalculadoraFrete({ totalItens }) {
 
       const uf = (data.uf || '').toUpperCase();
       const cidade = data.localidade || '';
-      const modalidades = calcularPrecos(uf, Math.max(1, totalItens));
+      let modalidades = calcularPrecos(uf, Math.max(1, totalItens));
 
       if (!modalidades) {
         setErro(`Estado "${uf}" não encontrado. Entre em contato conosco.`);
@@ -118,9 +118,17 @@ function CalculadoraFrete({ totalItens }) {
         return;
       }
 
+      // ✅ REGRA: São Paulo Capital = Frete Grátis
+      if (uf === 'SP' && (cidade === 'São Paulo' || cidade.toLowerCase().includes('sao paulo'))) {
+        modalidades = modalidades.map(m => ({
+          ...m,
+          preco: 0,
+          nome: `${m.nome} (Grátis - SP Capital)`
+        }));
+      }
+
       setResultado({ cidade, uf, modalidades });
       setStatus('success');
-      // Pré-seleciona PAC por padrão
       setShipping(modalidades.find(m => m.id === 'pac') || modalidades[0]);
 
     } catch {
@@ -274,59 +282,87 @@ export default function CartDrawer() {
 
   const handleCheckout = async () => {
     try {
-      const handle = import.meta.env.VITE_INFINITEPAY_HANDLE || 'fabayosports'; 
-
+      // Formata os itens para o padrão que a API espera
       const itemsFormatted = items.map(item => ({
-        description: `${item.name} (Tam: ${item.size})`,
+        name: `${item.name} (Tam: ${item.size})`,
         quantity: item.quantity,
         price: Math.round(item.price * 100),
       }));
 
       if (!freteGratis && shipping) {
         itemsFormatted.push({
-          description: `Frete ${shipping.nome} (${shipping.prazo})`,
+          name: `Frete ${shipping.nome} (${shipping.prazo})`,
           quantity: 1,
           price: shipping.preco,
         });
       }
 
+      // 1. TENTA USAR A API INTERNA (Ideal para Produção / Vercel)
+      try {
+        const response = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: itemsFormatted }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.checkout_url) {
+            window.location.href = data.checkout_url;
+            return; // Sucesso!
+          }
+        }
+      } catch (e) {
+        console.warn('API interna não disponível, tentando modo direto...');
+      }
+
+      // 2. FALLBACK: MODO DIRETO (Para ambiente de desenvolvimento local)
+      const handle = import.meta.env.VITE_INFINITEPAY_HANDLE || 'fabayosports';
       const payload = {
-        handle: handle,
+        handle,
         order_nsu: crypto.randomUUID(),
-        items: itemsFormatted,
-        itens: itemsFormatted,
+        items: itemsFormatted.map(i => ({ ...i, description: i.name })),
+        itens: itemsFormatted.map(i => ({ ...i, description: i.name })),
         redirect_url: window.location.origin + '/pagamento-concluido'
       };
 
-      // Tenta usar um proxy de CORS para desenvolvimento local
-      // Isso evita o erro de "Verifique sua conexão" no navegador
-      const corsProxy = 'https://corsproxy.io/?';
-      const apiUrl = 'https://api.checkout.infinitepay.io/links';
+      // Em dev, usamos o proxy apenas se necessário. Vou tentar sem proxy primeiro.
+      const directResponse = await fetch('https://api.checkout.infinitepay.io/links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => null);
 
-      const response = await fetch(corsProxy + encodeURIComponent(apiUrl), {
+      if (directResponse && directResponse.ok) {
+        const data = await directResponse.json();
+        if (data.url || data.checkout_url) {
+          window.location.href = data.url || data.checkout_url;
+          return;
+        }
+      }
+
+      // Se tudo falhar, tenta o proxy como última tentativa (apenas em dev)
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent('https://api.checkout.infinitepay.io/links')}`;
+      const proxyResponse = await fetch(proxyUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        console.error('Erro API:', errText);
-        throw new Error('Falha na comunicação com InfinitePay');
+      if (proxyResponse.ok) {
+        const data = await proxyResponse.json();
+        const url = data.url || data.checkout_url;
+        if (url) {
+          window.location.href = url;
+          return;
+        }
       }
 
-      const data = await response.json();
-      const checkoutUrl = data.url || data.checkout_url;
-
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        throw new Error('URL não encontrada');
-      }
+      throw new Error('Não foi possível gerar o link de pagamento.');
 
     } catch (err) {
       console.error('Erro no Checkout:', err);
-      alert('Não foi possível gerar o link de pagamento. Isso geralmente acontece em ambiente de teste (CORS). Tente novamente ou verifique se o handle está correto.');
+      alert('Houve um erro ao processar o pagamento. Se o erro persistir, tente novamente em instantes ou entre em contato via WhatsApp.');
     }
   };
 
