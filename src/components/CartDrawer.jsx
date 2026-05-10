@@ -272,6 +272,8 @@ export default function CartDrawer() {
   } = useCartStore();
 
   const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/+$/, '');
+  const checkoutApiUrl = apiBaseUrl ? `${apiBaseUrl}/api/create-payment` : '/api/create-payment';
+
   const subtotal = getSubtotal();
   const freteGratis = subtotal >= FRETE_GRATIS_ACIMA_DE;
   const shippingCost = freteGratis ? 0 : (shipping?.preco ?? null);
@@ -298,68 +300,20 @@ export default function CartDrawer() {
       }
 
       // 1. TENTA USAR A API INTERNA (Ideal para Produção / Vercel)
-      try {
-        const response = await fetch('/api/create-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: itemsFormatted }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.checkout_url) {
-            window.location.href = data.checkout_url;
-            return; // Sucesso!
-          }
-        }
-      } catch (e) {
-        console.warn('API interna não disponível, tentando modo direto...');
-      }
-
-      // 2. FALLBACK: MODO DIRETO (Para ambiente de desenvolvimento local)
-      const handle = import.meta.env.VITE_INFINITEPAY_HANDLE || 'fabayosports';
-      const payload = {
-        handle,
-        order_nsu: crypto.randomUUID(),
-        items: itemsFormatted.map(i => ({ ...i, description: i.name })),
-        itens: itemsFormatted.map(i => ({ ...i, description: i.name })),
-        redirect_url: window.location.origin + '/pagamento-concluido'
-      };
-
-      // Em dev, usamos o proxy apenas se necessário. Vou tentar sem proxy primeiro.
-      const directResponse = await fetch('https://api.checkout.infinitepay.io/links', {
+      const response = await fetch(checkoutApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }).catch(() => null);
-
-      if (directResponse && directResponse.ok) {
-        const data = await directResponse.json();
-        if (data.url || data.checkout_url) {
-          window.location.href = data.url || data.checkout_url;
-          return;
-        }
-      }
-
-      // Se tudo falhar, tenta o proxy como última tentativa (apenas em dev)
-      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent('https://api.checkout.infinitepay.io/links')}`;
-      const proxyResponse = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ items: itemsFormatted }),
       });
 
-      if (proxyResponse.ok) {
-        const data = await proxyResponse.json();
-        const url = data.url || data.checkout_url;
-        if (url) {
-          window.location.href = url;
-          return;
-        }
+      const data = await response.json().catch(() => null);
+      if (response.ok && data?.checkout_url) {
+        window.location.href = data.checkout_url;
+        return; // Sucesso!
       }
 
-      throw new Error('Não foi possível gerar o link de pagamento.');
-
+      const errorMessage = data?.error || data?.message || 'Falha ao criar pagamento';
+      throw new Error(errorMessage);
     } catch (err) {
       console.error('Erro no Checkout:', err);
       alert('Houve um erro ao processar o pagamento. Se o erro persistir, tente novamente em instantes ou entre em contato via WhatsApp.');
