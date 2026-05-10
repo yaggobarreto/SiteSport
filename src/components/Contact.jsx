@@ -19,7 +19,7 @@ export default function Contact() {
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {[
-              { label: 'WhatsApp', value: '(11) 99999-9999', icon: '📱' },
+              { label: 'WhatsApp', value: '(11) 93227-7941', icon: '📱' },
               { label: 'E-mail', value: 'contato@fabayosports.com', icon: '✉️' },
               { label: 'Instagram', value: '@fabayosports', icon: '📸' },
             ].map(item => (
