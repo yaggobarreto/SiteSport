@@ -223,6 +223,7 @@ html.lenis { height: auto; }
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 4rem;
+  align-items: start;
 }
 
 /* Responsive Gallery thumbnails */

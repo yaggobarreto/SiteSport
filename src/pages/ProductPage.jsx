@@ -61,7 +61,18 @@ export default function ProductPage() {
                 </button>
               ))}
             </div>
-            <div style={{ flex: 1, background: '#f8f8f8', borderRadius: '20px', overflow: 'hidden', aspectRatio: '4/5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ 
+              flex: 1, 
+              background: '#f8f8f8', 
+              borderRadius: '20px', 
+              overflow: 'hidden', 
+              aspectRatio: '4/5', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              maxHeight: '750px',
+              width: '100%'
+            }}>
               <>
                 <motion.img 
                   key={activeImage?.asset?._ref}
@@ -128,7 +139,7 @@ export default function ProductPage() {
                  <ShieldCheck style={{ color: '#00db84' }} size={24} />
                  <div>
                    <p style={{ fontWeight: 700, fontSize: '0.85rem' }}>Compra Segura</p>
-                   <p style={{ color: '#888', fontSize: '0.8rem' }}>Pagamento processado por InfinityPay</p>
+                   <p style={{ color: '#888', fontSize: '0.8rem' }}>Aceitamos Pix e cartão</p>
                  </div>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>

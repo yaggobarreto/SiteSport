@@ -42,7 +42,7 @@ export default function Footer() {
       </div>
       <div style={{ borderTop: '1px solid #222', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <p style={{ color: '#444', fontSize: '0.85rem' }}>© 2025 FABAYO Sports. Todos os direitos reservados.</p>
-        <p style={{ color: '#444', fontSize: '0.85rem' }}>CNPJ: 00.000.000/0001-00</p>
+        <p style={{ color: '#444', fontSize: '0.85rem' }}>CNPJ: 65.685.396/0001-01</p>
       </div>
     </footer>
   );

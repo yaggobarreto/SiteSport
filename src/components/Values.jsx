@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 
 const VALORES = [
   { icon: '🏆', titulo: 'Qualidade Oficial', desc: 'Produtos certificados com os mesmos materiais dos uniformes profissionais.' },
-  { icon: '🚚', titulo: 'Entrega Rápida', desc: 'Enviamos para todo o Brasil em até 10 dias úteis com rastreamento em tempo real.' },
-  { icon: '🔒', titulo: 'Compra Segura', desc: 'Pagamento 100% protegido. Aceitamos Pix, cartão e boleto com parcelas.' },
+  { icon: '🚚', titulo: 'Entrega Rápida', desc: 'Enviamos para todo o Brasil com rastreamento em tempo real dos correios.' },
+  { icon: '🔒', titulo: 'Compra Segura', desc: 'Aqui você paga com Pix e cartão.' },
   { icon: '↩️', titulo: 'Troca Fácil', desc: 'Não ficou bom? Troca grátis em 30 dias. Sem burocracia, sem custo.' },
 ];
 
