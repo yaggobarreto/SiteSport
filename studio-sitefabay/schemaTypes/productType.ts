@@ -87,6 +87,46 @@ export const productType = defineType({
       initialValue: 'camisa',
     }),
     defineField({
+      name: 'year',
+      title: 'Ano',
+      type: 'number',
+    }),
+    defineField({
+      name: 'sport',
+      title: 'Esporte',
+      type: 'string',
+    }),
+    defineField({
+      name: 'team',
+      title: 'Time / Equipe',
+      type: 'string',
+    }),
+    defineField({
+      name: 'categories',
+      title: 'Categorias para Filtro (Abas)',
+      description: 'Adicione tags como: Camisas Retrô, Coleção 2026, Basquete, Futebol, Seleções, Times, Edições Especiais',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        layout: 'tags',
+      },
+    }),
+    defineField({
+      name: 'collectionName',
+      title: 'Coleção',
+      type: 'string',
+    }),
+    defineField({
+      name: 'player',
+      title: 'Jogador (se aplicável)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'brand',
+      title: 'Marca',
+      type: 'string',
+    }),
+    defineField({
       name: 'featured',
       title: 'Produto em Destaque?',
       type: 'boolean',
