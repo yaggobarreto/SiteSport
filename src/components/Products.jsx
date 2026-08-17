@@ -153,16 +153,51 @@ export default function Products() {
       .trim();
   };
 
+  // Detecta categorias pelo nome quando o campo 'categories' está vazio
+  const detectCategoriesFromName = (name) => {
+    const n = normalizeString(name);
+    const cats = [];
+
+    const basketTerms = ['nba','regata','jersey','lakers','bulls','heat','celtics','warriors','nets','knicks','rockets','spurs','pistons','cavaliers','nuggets','clippers','thunder','jazz','pacers','bucks','giannis','lebron','kobe','curry','durant','antetokounmpo'];
+    if (basketTerms.some(t => n.includes(t))) cats.push('basquete');
+
+    const selecaoTerms = ['selecao','nacional','brasil','portugal','alemanha','estados unidos','franca','argentina','espanha','italia'];
+    if (selecaoTerms.some(t => n.includes(t))) cats.push('selecoes');
+
+    const timesTerms = ['arsenal','barcelona','chelsea','real madrid','manchester','liverpool','psg','juventus','inter milan','ajax','flamengo','corinthians','palmeiras','santos','atletico','cruzeiro','gremio'];
+    if (timesTerms.some(t => n.includes(t))) cats.push('times');
+
+    const isBasket = basketTerms.some(t => n.includes(t));
+    if (!isBasket) cats.push('futebol');
+
+    if (n.includes('2026') || n.includes('26/27') || n.includes('26-27')) cats.push('colecao 2026');
+    if (n.includes('retro') || n.includes('retr')) cats.push('camisas retro');
+    if (n.includes('especial') || (n.includes('jordan') && n.includes('brasil'))) cats.push('edicoes especiais');
+
+    return cats;
+  };
+
   const filteredProdutos = produtos.filter((p) => {
     // 1. Category Filter (Aba)
     if (selectedCategory !== 'Todas') {
       const catNormalized = normalizeString(selectedCategory);
+
+      // Checa no array categories (campo explícito no Sanity)
       const inCategories = p.categories && p.categories.some(
         c => normalizeString(c) === catNormalized
       );
-      const inOldCategory = p.category && normalizeString(p.category) === catNormalized;
-      
-      if (!inCategories && !inOldCategory) {
+
+      // Fallback: campo sport
+      const inSport = p.sport && normalizeString(p.sport) === catNormalized;
+
+      // Fallback: ano 2026 para aba Coleção 2026
+      const inYear2026 = catNormalized === normalizeString('Coleção 2026') && p.year === 2026;
+
+      // Fallback: detecta pelo nome do produto
+      const autoDetected = detectCategoriesFromName(p.name);
+      const inAutoDetect = autoDetected.includes(catNormalized);
+
+      if (!inCategories && !inSport && !inYear2026 && !inAutoDetect) {
         return false;
       }
     }
